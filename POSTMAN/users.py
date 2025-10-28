@@ -11,11 +11,16 @@ load_dotenv()
 
 app = FastAPI(title="Simple App", version = "1.0.0")
 
+token_time = int(os.getenv("token_time"))
+
 class Simple(BaseModel):
    name:str = Field(..., example= "Sam Larry")
    email:str = Field(..., example="sam@email.com")
    password:str = Field(..., example= 'sam123' )
    user_type:str = Field(..., example= 'student')
+
+class valid(BaseModel):
+    course_tile
 
 @app.post("/signup")
 def signup(input: Simple):
@@ -65,8 +70,14 @@ def login(input: LoginRequest):
 
         if not verified_password: 
             raise HTTPException(status_code = 404, detail = ' invalid email or pasword')
+        
+        encoded_token = create_token(details={
+            "email": result.email,
+            "userType": result.userType
+        },expiry=token_time)
+
         return {
-            "message": "Login Successful"
+            "message": "Login Successful","token": encoded_token
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail = str(e)) 
