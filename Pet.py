@@ -13,3 +13,4 @@ class Pet:
 EkpoDavid = Pet('Ekpo',150,'Rat')
 EkpoDavid.display_info()
 EkpoDavid.celebrate_birthday()
+
