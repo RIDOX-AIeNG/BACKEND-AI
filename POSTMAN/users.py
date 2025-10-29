@@ -1,11 +1,13 @@
 from database import db 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy import text
 import os 
 import bcrypt
 from dotenv import load_dotenv
 import uvicorn
+
+from middleware import create_token, verify_token
 
 load_dotenv()
 
@@ -19,8 +21,23 @@ class Simple(BaseModel):
    password:str = Field(..., example= 'sam123' )
    user_type:str = Field(..., example= 'student')
 
-class valid(BaseModel):
-    course_tile
+class LoginRequest(BaseModel):
+    email: str = Field(..., example= "samlarry@gmail.com")
+    password: str = Field(..., example= "sam123")
+
+class courseRequest(BaseModel):
+    title: str = Field(..., example="Algorithm")
+    level: str = Field(..., example="200lvl")
+
+class id(BaseModel):
+    courseid: int = Field(..., example= 1)
+
+
+@app.get("/")
+def rooot():
+    return {
+        "message": "HELLO WORLD"
+    }
 
 @app.post("/signup")
 def signup(input: Simple):
@@ -32,7 +49,8 @@ def signup(input: Simple):
         """)
         existing = db.execute(duplicate_query, {"email": input.email}).fetchone()
         if existing:
-            raise HTTPException(status_code=400, detail="Email already exists")
+            print("email already exists")
+            # raise HTTPException(status_code=400, detail="Email already exists")
 
         query = text("""
                 INSERT INTO users (name, email, password, user_type)
@@ -53,9 +71,7 @@ def signup(input: Simple):
     except Exception as e:
         raise HTTPException(status_code=500, detail = str(e))
     
-class LoginRequest(BaseModel):
-    email: str = Field(..., examples= "samlarry@gmail.com")
-    password: str = Field(..., examples= "sam123")
+
 @app.post("/login")
 def login(input: LoginRequest):
     try:
@@ -72,8 +88,10 @@ def login(input: LoginRequest):
             raise HTTPException(status_code = 404, detail = ' invalid email or pasword')
         
         encoded_token = create_token(details={
+             "id": result.id,
             "email": result.email,
-            "userType": result.userType
+            "user_type": result.user_type
+           
         },expiry=token_time)
 
         return {
@@ -81,6 +99,62 @@ def login(input: LoginRequest):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail = str(e)) 
+    
+
+
+
+@app.post("/courses")
+def add_courses(input: courseRequest, user_data = Depends(verify_token)):
+    try:
+        
+        print(user_data)
+        if user_data["user_type"] != "admin":
+            raise HTTPException(status_code=401, detail="You are not authorized to add a course")
+        
+
+        query = text("""
+            INSERT INTO courses (title, level)
+            VALUES (:title, :level)
+        """)
+
+        
+
+        db.execute(query, {"title":input.title, "level": input.level})
+        db.commit()
+
+        return {"message": f"course {input.title} created successfully"}
+
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        db.close()
+
+
+
+
+@app.post("/enroll")
+def enrollcourse(input:id, user_data = Depends(verify_token)):
+    try:
+        print(user_data)
+        if user_data["user_type"] != "student":
+            raise HTTPException(status_code=401, detail="You are not authorized to enroll for a course")
+        query=text("""
+            INSERT INTO enrollments(userid,courseid)
+                VALUES(:userid,:courseid)
+                   """)
+        db.execute(query, {"userid":user_data["id"], "courseid":input.courseid})
+        db.commit()
+        return {
+        "message": "Course created sucessfully",
+        "data": {
+            "userid":user_data["id"],
+            "courseid":input.courseid
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__=="__main__":
      uvicorn.run(app,host=os.getenv("host"), port=int(os.getenv("port")))
