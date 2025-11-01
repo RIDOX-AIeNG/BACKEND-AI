@@ -1,0 +1,39 @@
+{
+  "original_shape": [
+    614,
+    13
+  ],
+  "final_shape": [
+    614,
+    21
+  ],
+  "selected_features": [
+    "Credit_History",
+    "ApplicantIncome",
+    "CoapplicantIncome",
+    "ApplicantIncome_log",
+    "CoapplicantIncome_log",
+    "Income_Category",
+    "Income_Category_Code",
+    "TotalIncome",
+    "Log_TotalIncome"
+  ],
+  "engineered_features": [
+    "Income_Category_Medium",
+    "Income_Category_High",
+    "Income_Category_Very High",
+    "Income_Category_Code_2",
+    "Income_Category_Code_3",
+    "Income_Category_Code_4"
+  ],
+  "train_samples": 368,
+  "val_samples": 123,
+  "test_samples": 123,
+  "scaling_method": "StandardScaler",
+  "outlier_treatment": "IQR_capping",
+  "log_transformed": [
+    "ApplicantIncome",
+    "CoapplicantIncome",
+    "LoanAmount"
+  ]
+}
