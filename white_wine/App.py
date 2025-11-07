@@ -31,8 +31,8 @@ def predict_quality(payload: define_features):
                          payload.total_sulfur_dioxide, payload.density, payload.pH,
                          payload.sulphates, payload.alcohol]])
     
-    encoder = joblib.load("encoder.pkl")
-    model = joblib.load("BestModel.pkl")
+    encoder = joblib.load(r"C:\Users\DELL\Desktop\Backend\BACKEND-AI\white_wine\encoder.pkl")
+    model = joblib.load(r"C:\Users\DELL\Desktop\Backend\BACKEND-AI\white_wine\BestModel.pkl")
 
     features = encoder.transform(features)
     preds = model.predict(features)
