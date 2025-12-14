@@ -1,14 +1,3 @@
-feature,correlation
-ApplicantIncome_log,0.17510016550983792
-ApplicantIncome,0.16513812397776959
-Log_TotalIncome,0.13363403930795026
-CoapplicantIncome_log,0.10741245143496181
-Income_Category_Code_3,0.09914576563749597
-Income_Category_High,0.09914576563749597
-CoapplicantIncome,0.0958202730994768
-TotalIncome,0.09555528993035194
-Income_Category_Code_4,0.049268069900320795
-Income_Category_Very High,0.049268069900320795
-Income_Category_Medium,0.004606080618355088
-Income_Category_Code_2,0.004606080618355088
-Credit_History,
+version https://git-lfs.github.com/spec/v1
+oid sha256:59bc42455580c96450273dd33495b5384afb31c791f7918a2e65d960d9e2292e
+size 522
