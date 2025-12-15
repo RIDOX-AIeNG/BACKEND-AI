@@ -1,1 +1,4 @@
-Train.csv
+Zindi/Train.csv
+*.csv
+data/
+
