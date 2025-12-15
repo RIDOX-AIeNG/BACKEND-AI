@@ -1,0 +1,9 @@
+# Datasets / outputs
+*.csv
+data/
+Zindi/
+
+# ML artifacts
+*.pkl
+*.joblib
+
